@@ -1,5 +1,6 @@
 package com.brainstation23.erp.model.dto;
 
+import com.brainstation23.erp.constant.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,6 @@ public class UpdateUserRequest {
 	private Double salary;
 
 	@NotNull
-	@Schema(description = "User role", example = "Admin/Employee")
-	private String role;
+	@Schema(description = "User role", example = "EMPLOYEE")
+	private UserRole role;
 }

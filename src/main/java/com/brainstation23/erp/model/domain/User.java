@@ -1,5 +1,6 @@
 package com.brainstation23.erp.model.domain;
 
+import com.brainstation23.erp.constant.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,5 @@ public class User {
     private String email;
     private String password;
     private Double salary;
-    private String role;
+    private UserRole role;
 }
