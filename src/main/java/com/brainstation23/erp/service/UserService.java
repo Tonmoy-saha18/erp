@@ -1,14 +1,12 @@
 package com.brainstation23.erp.service;
 
+import com.brainstation23.erp.constant.UserRole;
 import com.brainstation23.erp.exception.custom.custom.NotFoundException;
 import com.brainstation23.erp.mapper.OrganizationMapper;
 import com.brainstation23.erp.mapper.UserMapper;
 import com.brainstation23.erp.model.domain.Organization;
 import com.brainstation23.erp.model.domain.User;
-import com.brainstation23.erp.model.dto.CreateOrganizationRequest;
-import com.brainstation23.erp.model.dto.CreateUserRequest;
-import com.brainstation23.erp.model.dto.UpdateOrganizationRequest;
-import com.brainstation23.erp.model.dto.UpdateUserRequest;
+import com.brainstation23.erp.model.dto.*;
 import com.brainstation23.erp.persistence.entity.OrganizationEntity;
 import com.brainstation23.erp.persistence.entity.UserEntity;
 import com.brainstation23.erp.persistence.repository.OrganizationRepository;
@@ -66,5 +64,17 @@ public class UserService {
 
 	public void deleteOne(UUID id) {
 		userRepository.deleteById(id);
+	}
+	public UUID createOne(UserSignUpRequest createRequest) {
+		var entity = new UserEntity();
+		entity.setId(UUID.randomUUID())
+				.setFirstName(createRequest.getFirstname())
+				.setLastName(createRequest.getLastName())
+				.setEmail(createRequest.getEmail())
+				.setPassword((createRequest.getPassword()))
+				.setSalary(0.00)
+				.setRole(UserRole.EMPLOYEE);
+		var createdEntity = userRepository.save(entity);
+		return createdEntity.getId();
 	}
 }
