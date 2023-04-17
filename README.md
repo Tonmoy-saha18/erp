@@ -37,9 +37,9 @@ As an Employee user, I can
    - [ ] /organizations
    - [ ] /employees
 - [ ] REST API
-   - [ ] /api/login (JWT)
-   - [ ] /api/signup (public)
-   - [ ] /api/users (secured, authorized to ADMIN only)
+   - [x] /api/login (JWT)
+   - [x] /api/signup (public)
+   - [x] /api/users (secured, authorized to ADMIN only)
    - [ ] /api/users (secured, authorized to ADMIN only)
    - [X] /api/organization (secured, authorized to ADMIN for CRUD, VIEW for EMPLOYEE)
 - [x] API Doc: Swagger
@@ -47,7 +47,8 @@ As an Employee user, I can
 - [x] Code Formatter: Spotless
 - [ ] Apply Spring Security
 - [ ] Global Exception Handler
-- [ ] Implement JPA Auditing
+- [x] BadpathRequest Handler
+- [x] Implement JPA Auditing
 - [ ] Write Unit Test
 - [ ] Setup different database driver in different profile
 - [ ] Upgrade to Spring Boot 3
