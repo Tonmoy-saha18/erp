@@ -14,10 +14,11 @@ import java.util.UUID;
 public class JwtTokenUtils {
     @Value("secret_key")
     private String secretKey;
+    private static final long JWT_EXPIRATION_TIME = 48 * 60 * 60 * 1000; // 2 days in milliseconds
 
     public String generateJwtToken(User user) {
         Date startDate = new Date();
-        Date expirationDate = new Date(startDate.getTime() + 172_800_000);
+        Date expirationDate = new Date(startDate.getTime() + JWT_EXPIRATION_TIME);
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())

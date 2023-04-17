@@ -11,6 +11,7 @@ import com.brainstation23.erp.persistence.entity.OrganizationEntity;
 import com.brainstation23.erp.persistence.entity.UserEntity;
 import com.brainstation23.erp.persistence.repository.OrganizationRepository;
 import com.brainstation23.erp.persistence.repository.UserRepository;
+import com.brainstation23.erp.util.JwtTokenUtils;
 import com.brainstation23.erp.util.RandomUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,12 +29,10 @@ import java.util.UUID;
 @Service
 public class UserService {
 	public static final String USER_NOT_FOUND = "User Not Found";
-	private static final long JWT_EXPIRATION_TIME = 172_800_000; // 10 days in milliseconds
-	private static final String JWT_SECRET_KEY = "secret_key";
-
 	private static final String CREDENTIAL_MISMATCH = "Invalid Username or Password";
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
+	private final JwtTokenUtils jwtTokenUtils;
 
 	public Page<User> getAll(Pageable pageable) {
 		var entities = userRepository.findAll(pageable);
@@ -89,14 +88,10 @@ public class UserService {
 		UserEntity userEntity = userRepository.findByEmail(mail)
 				.orElseThrow(() -> new NotFoundException((USER_NOT_FOUND)));
 
+		User user = userMapper.entityToDomain(userEntity);
 		String jwtToken;
 		if(userEntity.getPassword().equals(password)){
-			jwtToken = Jwts.builder()
-					.setSubject(userEntity.getId().toString())
-					.setIssuedAt(new Date())
-					.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME))
-					.signWith(SignatureAlgorithm.HS512, JWT_SECRET_KEY.getBytes())
-					.compact();
+			jwtToken = jwtTokenUtils.generateJwtToken(user);
 		}
 		else {
 			throw new Exception(CREDENTIAL_MISMATCH);
