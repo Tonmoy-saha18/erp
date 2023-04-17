@@ -32,8 +32,7 @@ public class UserSignUpRestController {
 	@PostMapping
 	public ResponseEntity<Void> createOne(@RequestBody @Valid UserSignUpRequest createRequest) {
 		log.info("Creating an User: {} ", createRequest);
-		var id = userService.createOne(createRequest); // overload the createOne method
-		var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
-		return ResponseEntity.created(location).build();
+		userService.createOne(createRequest); // overload the createOne method
+		return ResponseEntity.ok().build();
 	}
 }
