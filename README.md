@@ -46,11 +46,11 @@ As an Employee user, I can
 - [x] Mapper: Mapstruct
 - [x] Code Formatter: Spotless
 - [ ] Apply Spring Security
-- [ ] Global Exception Handler
+- [x] Global Exception Handler
 - [x] BadpathRequest Handler
 - [x] Implement JPA Auditing
 - [ ] Write Unit Test
-- [ ] Setup different database driver in different profile
+- [x] Setup different database driver in different profile
 - [ ] Upgrade to Spring Boot 3
 - [ ] Deployment (profile: develop)
 - [ ] Update Documentation (README.md)
