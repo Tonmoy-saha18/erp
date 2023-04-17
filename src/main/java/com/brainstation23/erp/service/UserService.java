@@ -12,12 +12,15 @@ import com.brainstation23.erp.persistence.entity.UserEntity;
 import com.brainstation23.erp.persistence.repository.OrganizationRepository;
 import com.brainstation23.erp.persistence.repository.UserRepository;
 import com.brainstation23.erp.util.RandomUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Slf4j
@@ -25,6 +28,10 @@ import java.util.UUID;
 @Service
 public class UserService {
 	public static final String USER_NOT_FOUND = "User Not Found";
+	private static final long JWT_EXPIRATION_TIME = 172_800_000; // 10 days in milliseconds
+	private static final String JWT_SECRET_KEY = "secret_key";
+
+	private static final String CREDENTIAL_MISMATCH = "Invalid Username or Password";
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 
@@ -76,5 +83,24 @@ public class UserService {
 				.setRole(UserRole.EMPLOYEE);
 		var createdEntity = userRepository.save(entity);
 		return createdEntity.getId();
+	}
+
+	public String authentication(String mail, String password) throws Exception{
+		UserEntity userEntity = userRepository.findByEmail(mail)
+				.orElseThrow(() -> new NotFoundException((USER_NOT_FOUND)));
+
+		String jwtToken;
+		if(userEntity.getPassword().equals(password)){
+			jwtToken = Jwts.builder()
+					.setSubject(userEntity.getId().toString())
+					.setIssuedAt(new Date())
+					.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME))
+					.signWith(SignatureAlgorithm.HS512, JWT_SECRET_KEY.getBytes())
+					.compact();
+		}
+		else {
+			throw new Exception(CREDENTIAL_MISMATCH);
+		}
+		return jwtToken;
 	}
 }
