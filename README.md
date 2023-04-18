@@ -45,7 +45,7 @@ As an Employee user, I can
 - [x] API Doc: Swagger
 - [x] Mapper: Mapstruct
 - [x] Code Formatter: Spotless
-- [ ] Apply Spring Security
+- [x] Apply Spring Security
 - [x] Global Exception Handler
 - [x] BadpathRequest Handler
 - [x] Implement JPA Auditing
