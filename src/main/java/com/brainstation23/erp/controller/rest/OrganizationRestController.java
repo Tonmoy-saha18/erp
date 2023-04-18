@@ -1,11 +1,14 @@
 package com.brainstation23.erp.controller.rest;
 
 
+import com.brainstation23.erp.constant.UserRole;
+import com.brainstation23.erp.exception.custom.custom.UnauthorizedUserException;
 import com.brainstation23.erp.mapper.OrganizationMapper;
 import com.brainstation23.erp.model.dto.CreateOrganizationRequest;
 import com.brainstation23.erp.model.dto.OrganizationResponse;
 import com.brainstation23.erp.model.dto.UpdateOrganizationRequest;
 import com.brainstation23.erp.service.OrganizationService;
+import com.brainstation23.erp.util.TokenAuthenticator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +31,13 @@ import java.util.UUID;
 public class OrganizationRestController {
 	private final OrganizationService organizationService;
 	private final OrganizationMapper organizationMapper;
+	private final TokenAuthenticator tokenAuthenticator;
 
 	@Operation(summary = "Get All Organizations")
 	@GetMapping
-	public ResponseEntity<Page<OrganizationResponse>> getAll(@ParameterObject Pageable pageable) {
+	public ResponseEntity<Page<OrganizationResponse>> getAll(@ParameterObject Pageable pageable,
+															 @RequestHeader(value="secretKey", required = true) String token) throws Exception {
+		tokenAuthenticator.getRole(token);
 		log.info("Getting List of Organizations");
 		var domains = organizationService.getAll(pageable);
 		return ResponseEntity.ok(domains.map(organizationMapper::domainToResponse));
@@ -39,7 +45,9 @@ public class OrganizationRestController {
 
 	@Operation(summary = "Get Single Organization")
 	@GetMapping("{id}")
-	public ResponseEntity<OrganizationResponse> getOne(@PathVariable UUID id) {
+	public ResponseEntity<OrganizationResponse> getOne(@PathVariable UUID id,
+													   @RequestHeader(value="secretKey", required = true) String token) throws Exception{
+		tokenAuthenticator.getRole(token);
 		log.info("Getting Details of Organization({})", id);
 		var domain = organizationService.getOne(id);
 		return ResponseEntity.ok(organizationMapper.domainToResponse(domain));
@@ -47,7 +55,11 @@ public class OrganizationRestController {
 
 	@Operation(summary = "Create Single Organization")
 	@PostMapping
-	public ResponseEntity<Void> createOne(@RequestBody @Valid CreateOrganizationRequest createRequest) {
+	public ResponseEntity<Void> createOne(@RequestBody @Valid CreateOrganizationRequest createRequest,
+										  @RequestHeader(value="secretKey", required = true) String token) throws Exception {
+		if(tokenAuthenticator.getRole(token) == UserRole.EMPLOYEE){
+			throw new UnauthorizedUserException(tokenAuthenticator.UNAUTHORIZED_USER);
+		}
 		log.info("Creating an Organization: {} ", createRequest);
 		var id = organizationService.createOne(createRequest);
 		var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
@@ -57,7 +69,11 @@ public class OrganizationRestController {
 	@Operation(summary = "Update Single Organization")
 	@PutMapping("{id}")
 	public ResponseEntity<Void> updateOne(@PathVariable UUID id,
-			@RequestBody @Valid UpdateOrganizationRequest updateRequest) {
+										  @RequestBody @Valid UpdateOrganizationRequest updateRequest,
+										  @RequestHeader(value="secretKey", required = true) String token) throws Exception{
+		if(tokenAuthenticator.getRole(token) == UserRole.EMPLOYEE){
+			throw new UnauthorizedUserException(tokenAuthenticator.UNAUTHORIZED_USER);
+		}
 		log.info("Updating an Organization({}): {} ", id, updateRequest);
 		organizationService.updateOne(id, updateRequest);
 		return ResponseEntity.noContent().build();
@@ -65,7 +81,11 @@ public class OrganizationRestController {
 
 	@Operation(summary = "Delete Single Organization")
 	@DeleteMapping("{id}")
-	public ResponseEntity<Void> deleteOne(@PathVariable UUID id) {
+	public ResponseEntity<Void> deleteOne(@PathVariable UUID id,
+										  @RequestHeader(value="secretKey", required = true) String token) throws Exception{
+		if(tokenAuthenticator.getRole(token) == UserRole.EMPLOYEE){
+			throw new UnauthorizedUserException(tokenAuthenticator.UNAUTHORIZED_USER);
+		}
 		log.info("Deleting an Organization({}) ", id);
 		organizationService.deleteOne(id);
 		return ResponseEntity.noContent().build();

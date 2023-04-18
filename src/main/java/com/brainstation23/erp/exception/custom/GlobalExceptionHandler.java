@@ -2,6 +2,7 @@ package com.brainstation23.erp.exception.custom;
 
 import com.brainstation23.erp.exception.custom.custom.AlreadyExistsException;
 import com.brainstation23.erp.exception.custom.custom.NotFoundException;
+import com.brainstation23.erp.exception.custom.custom.UnauthorizedUserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<String> handleCustomException(AlreadyExistsException ex) {
         log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    public ResponseEntity<String> handleCustomException(UnauthorizedUserException ex) {
+        log.error("Unauthorized token: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

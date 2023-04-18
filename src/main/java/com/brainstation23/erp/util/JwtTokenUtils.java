@@ -28,7 +28,7 @@ public class JwtTokenUtils {
                 .compact();
     }
 
-    public UUID getUserIdFromJwtToken(String token) {
+    public UUID getUserIdFromJwtToken(String token) throws Exception{
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)

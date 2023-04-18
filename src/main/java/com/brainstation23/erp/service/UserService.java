@@ -98,4 +98,8 @@ public class UserService {
 		}
 		return jwtToken;
 	}
+
+	public UUID getUserIdFromJwtToken(String token) throws Exception{
+		return jwtTokenUtils.getUserIdFromJwtToken(token);
+	}
 }
